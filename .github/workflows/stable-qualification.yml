@@ -28,7 +28,7 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ env.CANDIDATE_SHA }}
-      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+      - uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
         with:
           version: ${{ env.UV_VERSION }}
       - run: uv python install ${{ matrix.python-version }}
@@ -50,7 +50,7 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ env.CANDIDATE_SHA }}
-      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+      - uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
         with:
           version: ${{ env.UV_VERSION }}
       - run: uv python install ${{ matrix.python-version }}
@@ -68,7 +68,7 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ env.CANDIDATE_SHA }}
-      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+      - uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
         with:
           version: ${{ env.UV_VERSION }}
       - run: uv python install 3.12
@@ -86,7 +86,7 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ env.CANDIDATE_SHA }}
-      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+      - uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
         with:
           version: ${{ env.UV_VERSION }}
       - run: uv python install 3.12
@@ -104,7 +104,7 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ env.CANDIDATE_SHA }}
-      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+      - uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
         with:
           version: ${{ env.UV_VERSION }}
       - run: uv python install 3.12
@@ -131,7 +131,7 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ env.CANDIDATE_SHA }}
-      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+      - uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
         with:
           version: ${{ env.UV_VERSION }}
       - run: uv python install 3.12
@@ -156,11 +156,20 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ env.CANDIDATE_SHA }}
-      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+      - uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
         with:
           version: ${{ env.UV_VERSION }}
       - run: uv python install 3.12
       - run: uv sync --python 3.12 --all-extras --dev --locked
+      - name: Verify non-release tags cannot set the package version
+        run: |
+          env -u SETUPTOOLS_SCM_PRETEND_VERSION uv build \
+            --wheel \
+            --out-dir "${RUNNER_TEMP}/vcs-version" \
+            --build-constraints build-constraints.txt
+          uv run python scripts/qualification/verify_vcs_version.py \
+            --artifacts-dir "${RUNNER_TEMP}/vcs-version" \
+            --expected-version "${SETUPTOOLS_SCM_PRETEND_VERSION}"
       - name: Build from the fixed commit timestamp
         run: |
           export SOURCE_DATE_EPOCH
@@ -187,7 +196,7 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ env.CANDIDATE_SHA }}
-      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+      - uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
         with:
           version: ${{ env.UV_VERSION }}
       - run: uv python install 3.12 3.13 3.14 3.15
@@ -221,7 +230,7 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ env.CANDIDATE_SHA }}
-      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+      - uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
         with:
           version: ${{ env.UV_VERSION }}
       - run: uv python install 3.12
