@@ -45,6 +45,13 @@ from ml4t.live.persistence import redact_sensitive
 
 logger = logging.getLogger(__name__)
 
+# Every await in connect() is bounded, and these name the bounds rather than leaving them
+# as literals at the call sites. The handshake pair keeps the values it has always used;
+# the snapshot bound is new, and is the one whose absence let a connect hang indefinitely.
+IB_CONNECT_HANDSHAKE_TIMEOUT = 15.0  # ib_async's own connectAsync timeout
+IB_CONNECT_TIMEOUT = 20.0  # outer bound, in case connectAsync does not honour its own
+IB_SNAPSHOT_TIMEOUT = 30.0  # positions and open orders, after the handshake succeeds
+
 IB_PENDING_ORDER_STATUSES = frozenset(
     {*IBOrderStatus.ActiveStates, IBOrderStatus.PendingCancel, "PartiallyFilled"}
 )
@@ -181,15 +188,19 @@ class IBBroker:
                     port=self._port,
                     clientId=self._client_id,
                     account=self._account or "",  # Pass account like production
-                    timeout=15,
+                    timeout=IB_CONNECT_HANDSHAKE_TIMEOUT,
                 ),
-                timeout=20,  # Outer timeout wrapper
+                timeout=IB_CONNECT_TIMEOUT,  # Outer timeout wrapper
             )
         except (TimeoutError, ConnectionRefusedError) as e:
+            self.ib.disconnect()
+            self._connected = False
             detail = str(redact_sensitive(str(e)))
             logger.error("IBBroker: Connection failed: %s", detail)
             raise RuntimeError(f"IB connection failed: {detail}") from None
         except Exception as e:
+            self.ib.disconnect()
+            self._connected = False
             detail = str(redact_sensitive(str(e)))
             logger.error("IBBroker: Unexpected connect error: %s", detail)
             raise RuntimeError(f"IB connection failed: {detail}") from None
@@ -216,8 +227,15 @@ class IBBroker:
                     self._market_data_type,
                 )
 
-            await self._sync_positions()
-            await self._sync_orders()
+            # Bounded for the same reason the handshake above is. A Gateway can complete
+            # the handshake and then stop answering requests, and reqPositionsAsync waits
+            # on a reply that never arrives: the caller gets no error, no log line and no
+            # timeout. A notebook run sat 75 minutes here before it was killed, holding the
+            # connection and its scheduling slot the whole time. Failing loudly after
+            # IB_SNAPSHOT_TIMEOUT reuses the handler below, which removes the callbacks,
+            # disconnects and records the snapshot as unavailable.
+            await asyncio.wait_for(self._sync_positions(), timeout=IB_SNAPSHOT_TIMEOUT)
+            await asyncio.wait_for(self._sync_orders(), timeout=IB_SNAPSHOT_TIMEOUT)
         except Exception:
             if callbacks_registered:
                 try:
@@ -280,7 +298,7 @@ class IBBroker:
 
     @property
     def positions(self) -> dict[str, Position]:
-        """Thread-safe position access (Gemini v2 Critical Issue C).
+        """Return a thread-safe snapshot of positions.
 
         Note: This is called from worker thread via ThreadSafeBrokerWrapper.
         The lock prevents RuntimeError during dict iteration if IB callback
