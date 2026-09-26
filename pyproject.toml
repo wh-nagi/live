@@ -38,14 +38,14 @@ dependencies = [
     "ib-async==2.1.0",
     "alpaca-py==0.44.0",
     "httpx==0.28.1",
-    "ccxt>=4.5.31,<=4.5.74",
+    "ccxt>=4.5.31,<=4.5.78",
 ]
 
 [project.scripts]
 ml4t-live = "ml4t.live.cli.main:app"
 
 [project.urls]
-Homepage = "https://www.ml4trading.io/docs/live/"
+Homepage = "https://www.ml4trading.io/"
 Documentation = "https://www.ml4trading.io/docs/live/"
 Repository = "https://github.com/ml4t/live"
 Issues = "https://github.com/ml4t/live/issues"
@@ -68,7 +68,7 @@ docs = [
     "mkdocstrings[python]>=0.24.0",
 ]
 experimental = [
-    "databento==0.84.0",
+    "databento==0.86.0",
 ]
 
 [build-system]
