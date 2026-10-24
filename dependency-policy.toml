@@ -59,21 +59,37 @@ license = "BSD-3-Clause"
 support = "active upstream; exact pre-1.0 transport API"
 
 [dependencies.ccxt]
-requirement = "ccxt>=4.5.31,<=4.5.78"
-minimum = "ccxt==4.5.31"
-locked = "ccxt==4.5.78"
-maximum = "ccxt==4.5.78"
+requirement = "ccxt==4.5.88"
+minimum = "ccxt==4.5.88"
+locked = "ccxt==4.5.88"
+maximum = "ccxt==4.5.88"
 license = "MIT"
-support = "active upstream; accepted patch interval is exercised at both endpoints"
+support = "exact patched SDK; upgrades must replace vulnerable HTTP dependency pins"
 
 [dependencies.databento]
-requirement = "databento==0.86.0"
-minimum = "databento==0.86.0"
-locked = "databento==0.86.0"
-maximum = "databento==0.86.0"
+requirement = "databento==0.87.0"
+minimum = "databento==0.87.0"
+locked = "databento==0.87.0"
+maximum = "databento==0.87.0"
 license = "Apache-2.0"
 support = "experimental optional adapter; exact SDK version"
 matrix = false
+
+[dependencies.certifi]
+requirement = "certifi==2026.10.19"
+minimum = "certifi==2026.10.19"
+locked = "certifi==2026.10.19"
+maximum = "certifi==2026.10.19"
+license = "MPL-2.0"
+support = "patched trust bundle; upgrades must replace roots affected by GHSA-6q48-6c7w-9gw2"
+
+[dependencies.aiohttp]
+requirement = "aiohttp==3.14.4"
+minimum = "aiohttp==3.14.4"
+locked = "aiohttp==3.14.4"
+maximum = "aiohttp==3.14.4"
+license = "Apache-2.0"
+support = "patched SDK transport; existing environments must replace vulnerable 3.14.3"
 
 [imports]
 alpaca = "alpaca-py"
@@ -85,7 +101,7 @@ ib_async = "ib-async"
 "ml4t.specs" = "ml4t-specs"
 
 [build-dependencies.hatchling]
-requirement = "hatchling==1.32.0"
+requirement = "hatchling==1.32.4"
 license = "MIT"
 support = "active upstream; exact isolated-build backend"
 

@@ -47,8 +47,10 @@ Each provider must verify its official paper endpoint and paper account before s
 workflow then checks positions, all pending orders and an asset-filtered view, cash, account value,
 unsupported-capability rejection, risk-policy rejection, a tagged one-share limit order, working
 acknowledgement, reconnect reconciliation, replacement, cancellation, cleanup, and reconciliation
-from a fresh process. IB accepts only the standard paper ports and an account identified by IB as a
-paper account. Alpaca accepts only the SDK's official paper endpoint in sandbox mode.
+from a fresh process. IB working acknowledgement requires a Gateway-assigned permanent order ID;
+the SDK's locally created `PendingSubmit` trade alone does not qualify. IB accepts only the standard
+paper ports and an account identified by IB as a paper account. Alpaca accepts only the SDK's
+official paper endpoint in sandbox mode.
 
 The selected provider runs its short lifecycle or external-feed check and its six-hour soak. Other
 providers do not need to be online. A release with unchanged provider contracts does not dispatch
@@ -70,9 +72,13 @@ provider's result. Documentation, metadata, workflows, generic build tools, and 
 the provider's reachable contract do not invalidate it. Missing inputs or an unsupported identity
 schema fail closed.
 
-The workflow stores redacted evidence as a 90-day Actions artifact and as a durable prerelease
-asset named `provider-evidence-RUN_ID/provider-evidence.zip`. The release gate takes wheel and
-source-distribution hashes from the exact candidate artifacts. It then selects complete lifecycle,
+The workflow stores redacted evidence as a 90-day Actions artifact. Leave `publish-evidence` at
+its default `false` to qualify without creating a GitHub release. Publishing a durable prerelease
+asset named `provider-evidence-RUN_ID/provider-evidence.zip` requires separate maintainer
+authorization and an explicit `publish-evidence: true` request. Retained, validated evidence can
+also be archived after qualification once publication is authorized, without repeating the soak.
+The release gate takes artifact hashes from the exact candidate wheel and source distribution.
+It then selects complete lifecycle,
 restart, and soak evidence independently for each matching provider contract. Provider evidence may
 come from different current or earlier runs. Evidence has no time-based expiry. Missing, malformed,
 mismatched, or unclassifiable evidence fails closed before publication. The Aug 10 run at
@@ -86,7 +92,9 @@ input, forces fail-closed overload, and requires shutdown within five seconds. T
 then continues for at least six hours with five-minute event, queue, and RSS snapshots and one
 retained-state restart. Every complete minute must remain contiguous, final state must match a
 native OKX observation, RSS growth must remain below 25 MiB, and errors, rejections, or overflows
-fail the run. The retained feed bundle also proves that Alpaca, IB, DataBento, and generic CCXT feed
+fail the run. A completed session rejected by the final checks retains its metrics with
+`passed: false`; it cannot satisfy release qualification. The retained feed bundle also proves that
+Alpaca, IB, DataBento, and generic CCXT feed
 construction requires `experimental=True` and records each adapter's missing guarantees.
 
 The `Monthly provider health` workflow runs the external IB, Alpaca, and OKX integration suites on
