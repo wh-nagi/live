@@ -44,7 +44,7 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ env.CANDIDATE_SHA }}
-      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+      - uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
         with:
           version: ${{ env.UV_VERSION }}
       - run: uv python install ${{ matrix.python-version }}
@@ -66,7 +66,7 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ env.CANDIDATE_SHA }}
-      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+      - uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
         with:
           version: ${{ env.UV_VERSION }}
       - run: uv python install ${{ matrix.python-version }}
@@ -84,7 +84,7 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ env.CANDIDATE_SHA }}
-      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+      - uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
         with:
           version: ${{ env.UV_VERSION }}
       - run: uv python install 3.12
@@ -102,7 +102,7 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ env.CANDIDATE_SHA }}
-      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+      - uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
         with:
           version: ${{ env.UV_VERSION }}
       - run: uv python install 3.12
@@ -120,7 +120,7 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ env.CANDIDATE_SHA }}
-      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+      - uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
         with:
           version: ${{ env.UV_VERSION }}
       - run: uv python install 3.12
@@ -147,7 +147,7 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ env.CANDIDATE_SHA }}
-      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+      - uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
         with:
           version: ${{ env.UV_VERSION }}
       - run: uv python install 3.12
@@ -181,12 +181,14 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ env.CANDIDATE_SHA }}
-      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+      - uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
         with:
           version: ${{ env.UV_VERSION }}
       - run: uv python install 3.12
       - run: uv sync --python 3.12 --all-extras --dev --locked
       - name: Verify non-release tags cannot set the package version
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           env -u SETUPTOOLS_SCM_PRETEND_VERSION uv build \
             --wheel \
@@ -194,7 +196,7 @@ jobs:
             --build-constraints build-constraints.txt
           uv run python scripts/qualification/verify_vcs_version.py \
             --artifacts-dir "${RUNNER_TEMP}/vcs-version" \
-            --expected-version "${SETUPTOOLS_SCM_PRETEND_VERSION}"
+            --repository "${{ github.repository }}"
       - name: Build from the fixed commit timestamp
         run: |
           export SOURCE_DATE_EPOCH
@@ -221,7 +223,7 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ env.CANDIDATE_SHA }}
-      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+      - uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
         with:
           version: ${{ env.UV_VERSION }}
       - run: uv python install 3.12 3.13 3.14 3.15
@@ -255,7 +257,7 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ env.CANDIDATE_SHA }}
-      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+      - uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
         with:
           version: ${{ env.UV_VERSION }}
       - run: uv python install 3.12

@@ -31,12 +31,15 @@ classifiers = [
     "Programming Language :: Python :: 3.14",
     "Typing :: Typed",
 ]
-requires-python = ">=3.12"
+requires-python = ">=3.12,<3.15"
 dependencies = [
-    "ml4t-backtest>=0.1.0,<0.2",
-    "ml4t-specs>=0.1.1,<0.2",
+    "ml4t-backtest>=0.2.0,<0.3",
+    "ml4t-specs>=0.2.0,<0.3",
+    "numpy>=2.3.2,<2.5",
+    "pandas>=2.3.3,<3.1",
     "ib-async==2.1.0",
     "alpaca-py==0.44.0",
+    "msgpack>=1.2.3,<2",
     "httpx==0.28.1",
     "ccxt==4.5.88",
     "certifi==2026.10.19",
@@ -60,7 +63,7 @@ dev = [
     "pytest-asyncio>=0.23",
     "pytest-cov>=4.1",
     "ruff>=0.8",
-    "ty",
+    "ty==0.0.69",
     "pre-commit>=3.0",
     "pyyaml==6.0.3",
 ]
@@ -118,7 +121,7 @@ dev = [
     { include-group = "test" },
     "databento>=0.38.0; python_version < '3.15'",
     "ruff>=0.8.0",
-    "ty",
+    "ty==0.0.69",
     "pre-commit>=3.0",
     "twine>=6.0.0",
 ]
